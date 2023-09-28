@@ -13,14 +13,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="subscription")
-@SequenceGenerator(
-        name = "SUBSCRIPTION_SEQ_GENERATOR",
-        sequenceName = "SUBSCRIPTION_SEQ", // 매핑할 데이터베이스 시퀀스 이름
-        initialValue = 1,
-        allocationSize = 50)
 public class Subscription {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SUBSCRIPTION_SEQ_GENERATOR")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "subscription_id")
     private Long subscriptionId;
 
