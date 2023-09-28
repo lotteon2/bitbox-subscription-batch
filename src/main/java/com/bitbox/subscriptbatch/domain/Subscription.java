@@ -31,7 +31,7 @@ public class Subscription {
     @Column(name="is_valid", nullable = false)
     private boolean isValid;
 
-    @Column(name="subscriptionType", nullable = false)
+    @Column(name="subscription_type", nullable = false)
     @Enumerated(EnumType.ORDINAL)
     private SubscriptionType subscriptionType;
 }
