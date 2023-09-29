@@ -32,6 +32,6 @@ public class Subscription {
     private boolean isValid;
 
     @Column(name="subscription_type", nullable = false)
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private SubscriptionType subscriptionType;
 }
