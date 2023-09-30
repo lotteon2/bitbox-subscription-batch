@@ -61,7 +61,7 @@ public class SubscriptionBatchTest {
         assertThat(jobExecution.getStatus()).isEqualTo(BatchStatus.COMPLETED);
 
         kafkaConsumer.resetLatch(); // latch 초기화
-        kafkaConsumer.getLatch().await(10, TimeUnit.SECONDS);
+        kafkaConsumer.getLatch().await(1, TimeUnit.SECONDS);
 
         List<Subscription> list = (List<Subscription>) subscriptionRepository.findAll();
         long validFalseCnt = list.stream()
