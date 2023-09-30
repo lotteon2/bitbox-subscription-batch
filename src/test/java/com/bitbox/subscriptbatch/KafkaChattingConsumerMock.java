@@ -1,4 +1,3 @@
-
 package com.bitbox.subscriptbatch;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;

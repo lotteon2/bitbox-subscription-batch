@@ -39,7 +39,7 @@ public class SubscriptionBatchTest {
     private KafkaChattingConsumerMock kafkaChattingConsumerMock;
 
     @BeforeEach
-    public void insertData(){
+    public void insertData() throws InterruptedException {
         Subscription subscription1 = new Subscription(1L, "최성훈", stringToLocalDateTime("2023-09-25 18:00:00"),stringToLocalDateTime("2023-09-26 18:00:00"), true, SubscriptionType.ONE_DAY);
         Subscription subscription2 = new Subscription(2L, "최성훈", stringToLocalDateTime("2023-09-25 18:00:00"),stringToLocalDateTime("2023-09-28 18:00:00"), true, SubscriptionType.THREE_DAYS);
         Subscription subscription3 = new Subscription(3L, "최성훈", stringToLocalDateTime("2023-09-25 18:00:00"),stringToLocalDateTime("2023-10-02 18:00:00"), true, SubscriptionType.SEVEN_DAYS);
@@ -49,6 +49,9 @@ public class SubscriptionBatchTest {
         subscriptionRepository.save(subscription2);
         subscriptionRepository.save(subscription3);
         subscriptionRepository.save(subscription4);
+
+        kafkaChattingConsumerMock.resetLatch(); // latch 초기화
+        Thread.sleep(2000);
     }
 
     @Test
@@ -60,9 +63,7 @@ public class SubscriptionBatchTest {
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
         assertThat(jobExecution.getStatus()).isEqualTo(BatchStatus.COMPLETED);
 
-        kafkaChattingConsumerMock.resetLatch(); // latch 초기화
-
-        kafkaChattingConsumerMock.getLatch().await(2, TimeUnit.SECONDS);
+        kafkaChattingConsumerMock.getLatch().await(1, TimeUnit.SECONDS);
 
         List<Subscription> list = (List<Subscription>) subscriptionRepository.findAll();
         long validFalseCnt = list.stream()
