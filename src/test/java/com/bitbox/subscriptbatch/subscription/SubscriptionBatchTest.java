@@ -1,6 +1,6 @@
 package com.bitbox.subscriptbatch.subscription;
 
-import com.bitbox.subscriptbatch.KafkaConsumerMock;
+import com.bitbox.subscriptbatch.KafkaChattingConsumerMock;
 import com.bitbox.subscriptbatch.TestBatchConfig;
 import com.bitbox.subscriptbatch.domain.Subscription;
 import com.bitbox.subscriptbatch.repository.SubscriptionRepository;
@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBatchTest
-@SpringBootTest(classes = {SubscriptionBatch.class, TestBatchConfig.class, KafkaConsumerMock.class})
+@SpringBootTest(classes = {SubscriptionBatch.class, TestBatchConfig.class, KafkaChattingConsumerMock.class})
 @EmbeddedKafka( partitions = 1,
         brokerProperties = { "listeners=PLAINTEXT://localhost:7777"},
         ports = {7777})
@@ -36,7 +36,7 @@ public class SubscriptionBatchTest {
     @Autowired
     private SubscriptionRepository subscriptionRepository;
     @Autowired
-    private KafkaConsumerMock kafkaConsumer;
+    private KafkaChattingConsumerMock kafkaChattingConsumerMock;
 
     @BeforeEach
     public void insertData(){
@@ -52,7 +52,7 @@ public class SubscriptionBatchTest {
     }
 
     @Test
-    public void subscription테이블에서_isValid가_false인게_2개가존재하고_알림카프카통에는_1개가있고_채팅카프카통에는_2개가있음을_확인할수있다() throws Exception {
+    public void subscription테이블에서_isValid가_false인게_2개가존재하고_채팅카프카통에는_2개가있음을_확인할수있다() throws Exception {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addString("date", "20230928170024")
                 .toJobParameters();
@@ -60,19 +60,18 @@ public class SubscriptionBatchTest {
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
         assertThat(jobExecution.getStatus()).isEqualTo(BatchStatus.COMPLETED);
 
-        kafkaConsumer.resetLatch(); // latch 초기화
-        kafkaConsumer.getLatch().await(1, TimeUnit.SECONDS);
+        kafkaChattingConsumerMock.resetLatch(); // latch 초기화
+
+        kafkaChattingConsumerMock.getLatch().await(2, TimeUnit.SECONDS);
 
         List<Subscription> list = (List<Subscription>) subscriptionRepository.findAll();
         long validFalseCnt = list.stream()
                 .filter(subscription -> !subscription.isValid())
                 .count();
 
-        assertEquals(kafkaConsumer.getAlarmPayload().size(),1);
-        assertEquals(kafkaConsumer.getExpirationPayload().size(),2);
+        assertEquals(kafkaChattingConsumerMock.getPayload().size(),2);
         assertEquals(validFalseCnt, 2);
     }
-
 
     public LocalDateTime stringToLocalDateTime(String dateString){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
