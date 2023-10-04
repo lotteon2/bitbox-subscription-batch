@@ -17,5 +17,8 @@ spring:
           batch_size: 500
   kafka:
     bootstrap-servers: localhost:7777
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 alarmTopicName: attendanceAlarmTest
 expirationTopicName: subscriptionExpirationTest

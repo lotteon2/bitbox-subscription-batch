@@ -5,7 +5,6 @@ import com.bitbox.subscriptbatch.repository.SubscriptionRepository;
 import io.github.bitbox.bitbox.dto.NotificationDto;
 import io.github.bitbox.bitbox.dto.SubscriptionExpireDto;
 import io.github.bitbox.bitbox.util.DateTimeUtil;
-import io.github.bitbox.bitbox.util.KafkaProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -34,7 +33,8 @@ import java.util.Map;
 public class SubscriptionBatch {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, SubscriptionExpireDto> subscriptionTemplate;
+    private final KafkaTemplate<String, NotificationDto> notificationTemplate;
     private final EntityManagerFactory emf;
     private final SubscriptionRepository subscriptionRepository;
     @Value("${spring.jpa.properties.hibernate.jdbc.batch_size}")
@@ -88,14 +88,14 @@ public class SubscriptionBatch {
                 switch(DateTimeUtil.compareTwoTime(localDateTime, subscription.getEndDate())){
                     case EXPIRED: // 만료
                         subscriptionIds.add(subscription.getSubscriptionId());
-                        KafkaProducer.send(kafkaTemplate, expirationTopicName, SubscriptionExpireDto.builder()
+                        subscriptionTemplate.send(expirationTopicName, SubscriptionExpireDto.builder()
                                 .startDate(subscription.getStartDate())
                                 .endDate(subscription.getEndDate())
                                 .memberId(subscription.getMemberId())
                                 .build());
                         break;
                     case ONE_HOUR_LEFT: // 1시간전
-                        KafkaProducer.send(kafkaTemplate, alarmTopicName, NotificationDto.builder()
+                        notificationTemplate.send(alarmTopicName, NotificationDto.builder()
                                 .notificationType(messageType)
                                 .receiverId(subscription.getMemberId())
                                 .boardId(null)
