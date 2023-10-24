@@ -4,6 +4,8 @@ import com.bitbox.subscriptbatch.domain.Subscription;
 import com.bitbox.subscriptbatch.repository.SubscriptionRepository;
 import io.github.bitbox.bitbox.dto.NotificationDto;
 import io.github.bitbox.bitbox.dto.SubscriptionExpireDto;
+import io.github.bitbox.bitbox.enums.NotificationType;
+import io.github.bitbox.bitbox.enums.SubscriptionType;
 import io.github.bitbox.bitbox.util.DateTimeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +45,7 @@ public class SubscriptionBatch {
     private String alarmTopicName;
     @Value("${expirationTopicName}")
     private String expirationTopicName;
-    private final String messageType = "subscription"; // enum 타입으로 변경 예정
+    private final NotificationType messageType = NotificationType.SUBSCRIPTION;
 
     // 1시간 단위로 도는 배치
     @Bean
