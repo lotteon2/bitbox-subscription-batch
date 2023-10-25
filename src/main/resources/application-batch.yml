@@ -3,4 +3,4 @@ spring:
     import: ${CONFIG_SERVER}
   cloud:
     config:
-      name: subscription-service
+      name: subscription-batch-service
