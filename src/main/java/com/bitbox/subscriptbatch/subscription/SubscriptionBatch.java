@@ -99,6 +99,7 @@ public class SubscriptionBatch {
                     case ONE_HOUR_LEFT: // 1시간전
                         notificationTemplate.send(alarmTopicName, NotificationDto.builder()
                                 .notificationType(messageType)
+                                .boardType(null)
                                 .receiverId(subscription.getMemberId())
                                 .boardId(null)
                                 .senderNickname(null)
