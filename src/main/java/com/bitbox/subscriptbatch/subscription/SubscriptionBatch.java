@@ -5,10 +5,8 @@ import com.bitbox.subscriptbatch.repository.SubscriptionRepository;
 import io.github.bitbox.bitbox.dto.NotificationDto;
 import io.github.bitbox.bitbox.dto.SubscriptionExpireDto;
 import io.github.bitbox.bitbox.enums.NotificationType;
-import io.github.bitbox.bitbox.enums.SubscriptionType;
 import io.github.bitbox.bitbox.util.DateTimeUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -30,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
-@Slf4j
 @Configuration
 public class SubscriptionBatch {
     private final JobBuilderFactory jobBuilderFactory;
